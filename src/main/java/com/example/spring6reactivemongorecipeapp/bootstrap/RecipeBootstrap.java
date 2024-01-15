@@ -4,6 +4,8 @@ import com.example.spring6reactivemongorecipeapp.domain.*;
 import com.example.spring6reactivemongorecipeapp.repositories.CategoryRepository;
 import com.example.spring6reactivemongorecipeapp.repositories.RecipeRepository;
 import com.example.spring6reactivemongorecipeapp.repositories.UnitOfMeasureRepository;
+import com.example.spring6reactivemongorecipeapp.repositories.reactive.CategoryReactiveRepository;
+import com.example.spring6reactivemongorecipeapp.repositories.reactive.RecipeReactiveRepository;
 import com.example.spring6reactivemongorecipeapp.repositories.reactive.UnitOfMeasureReactiveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -31,6 +34,12 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
     @Autowired
     UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
+    @Autowired
+    RecipeReactiveRepository recipeReactiveRepository;
+
+    @Autowired
+    CategoryReactiveRepository categoryReactiveRepository;
+
     public RecipeBootstrap(CategoryRepository categoryRepository,
                            RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
         this.categoryRepository = categoryRepository;
@@ -46,7 +55,9 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         recipeRepository.deleteAll();
         recipeRepository.saveAll(getRecipes());
 
-        log.debug("count:" + unitOfMeasureReactiveRepository.count().block().toString());
+        log.debug("unit of measure count:" + Objects.requireNonNull(unitOfMeasureReactiveRepository.count().block()).toString());
+        log.debug("category count:" + Objects.requireNonNull(categoryReactiveRepository.count().block()).toString());
+        log.debug("recipe count:" + Objects.requireNonNull(recipeReactiveRepository.count().block()).toString());
 
         log.debug("Loading Bootstrap Data");
     }
